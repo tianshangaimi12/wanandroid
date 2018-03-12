@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WanAndroid</string>
+    <string name="first_index">首页</string>
+    <string name="second_index">体系</string>
+    <string name="third_index">导航</string>
+    <string name="search_menu">搜索</string>
 </resources>
