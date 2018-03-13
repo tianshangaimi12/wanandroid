@@ -1,7 +1,6 @@
 package com.example.wanandroid;
 
 import android.graphics.Color;
-import android.media.Image;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -9,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,16 +17,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.wanandroid.contoller.BannerAdapter;
 import com.example.wanandroid.contoller.MainFragmentAdapter;
 import com.example.wanandroid.fragment.FirstPageFragment;
 import com.example.wanandroid.fragment.NavigationFragment;
 import com.example.wanandroid.fragment.SystemFragment;
+import com.example.wanandroid.javabean.BannerBean;
+import com.example.wanandroid.utils.RetrofitUtils;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private DrawerLayout mainDrawerLayout;
@@ -47,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SystemFragment systemFragment;
     private NavigationFragment navigationFragment;
     private MainFragmentAdapter mainFragmentAdapter;
+    private Retrofit builder;
+
+    private final String TAG = "MainActivity";
+    private final String BASE_URL = "http://www.wanandroid.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initView();
         initToolBar();
-
+        initData();
     }
 
     private void initView()
@@ -182,6 +197,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    public void initData()
+    {
+        builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RetrofitUtils retrofitUtils = builder.create(RetrofitUtils.class);
+        Observable<BannerBean> observableBanner = retrofitUtils.callBanner();
+        observableBanner.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<BannerBean>() {
+                    @Override
+                    public void accept(BannerBean bannerBean) throws Exception {
+                        if (bannerBean.getErrorCode() == 0)
+                        {
+                            Log.d(TAG, "banner size: "+bannerBean.getData().size());
+                            firstPageFragment.setBannerBean(bannerBean);
+                        }
+                    }
+                });
     }
 }
 

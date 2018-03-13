@@ -3,6 +3,7 @@ package com.example.wanandroid.contoller;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -33,5 +34,12 @@ public class MainFragmentAdapter extends FragmentPagerAdapter{
             return fragments.size();
         }
         return 0;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        //viewpager会保存三个Fragment，从第一个到第三个Fragment时会重新加载
+        //注释掉取消重新加载
+        //super.destroyItem(container, position, object);
     }
 }

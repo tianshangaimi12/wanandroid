@@ -4,4 +4,5 @@
     <string name="second_index">体系</string>
     <string name="third_index">导航</string>
     <string name="search_menu">搜索</string>
+    <string name="webview_title">内容</string>
 </resources>

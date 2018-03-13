@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="index_length" format="dimension"/>
+    <attr name="index_distance" format="dimension"/>
+    <attr name="index_color" format="color"/>
+
+    <declare-styleable name="index">
+        <attr name="index_length"/>
+        <attr name="index_distance"/>
+        <attr name="index_color"/>
+    </declare-styleable>
+</resources>
