@@ -17,14 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.wanandroid.contoller.BannerAdapter;
 import com.example.wanandroid.contoller.MainFragmentAdapter;
 import com.example.wanandroid.fragment.FirstPageFragment;
 import com.example.wanandroid.fragment.NavigationFragment;
 import com.example.wanandroid.fragment.SystemFragment;
 import com.example.wanandroid.javabean.BannerBean;
+import com.example.wanandroid.javabean.FirstPageNewsBean;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavigationFragment navigationFragment;
     private MainFragmentAdapter mainFragmentAdapter;
     private Retrofit builder;
+    public RetrofitUtils retrofitUtils;
 
     private final String TAG = "MainActivity";
     private final String BASE_URL = "http://www.wanandroid.com/";
@@ -206,20 +206,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        RetrofitUtils retrofitUtils = builder.create(RetrofitUtils.class);
-        Observable<BannerBean> observableBanner = retrofitUtils.callBanner();
-        observableBanner.observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<BannerBean>() {
-                    @Override
-                    public void accept(BannerBean bannerBean) throws Exception {
-                        if (bannerBean.getErrorCode() == 0)
-                        {
-                            Log.d(TAG, "banner size: "+bannerBean.getData().size());
-                            firstPageFragment.setBannerBean(bannerBean);
-                        }
-                    }
-                });
+        retrofitUtils = builder.create(RetrofitUtils.class);
     }
+
+
 }
 

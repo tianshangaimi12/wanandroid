@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentTop="true" />
-
     <com.example.wanandroid.view.ViewPagerIndex
         android:id="@+id/vp_index_banner"
         android:layout_width="match_parent"
@@ -24,4 +23,10 @@
         index:index_color="@color/colorMain"
         index:index_distance="6dp"
         index:index_length="2dp" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/rlv_first_page_news"
+        android:layout_below="@id/vp_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

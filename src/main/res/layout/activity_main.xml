@@ -28,6 +28,7 @@
     </LinearLayout>
     <RelativeLayout
         android:background="#3f9be7"
+        android:clickable="true"
         android:id="@+id/rl_setting"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
