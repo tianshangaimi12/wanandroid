@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by zhangchong on 18-3-19.
  */
-public class FirstPageNewsBean {
+public class PageNewsBean {
 
     private int errorCode;
     private String errorMsg;

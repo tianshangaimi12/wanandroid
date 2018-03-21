@@ -46,7 +46,7 @@ public class FirstPageNewsAdapter  extends RecyclerView.Adapter<FirstPageNewsAda
             return;
         }
         NewsBean newsBean = newsBeens.get(position);
-        holder.txtName.setText(newsBean.getAuthor());
+       // holder.txtName.setText(newsBean.getAuthor());
         holder.txtSubject.setText(newsBean.getChapterName());
         holder.txtContent.setText(newsBean.getTitle());
         holder.txtDate.setText(newsBean.getNiceDate());

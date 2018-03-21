@@ -20,8 +20,8 @@ import com.example.wanandroid.contoller.BannerAdapter;
 import com.example.wanandroid.contoller.FirstPageNewsAdapter;
 import com.example.wanandroid.contoller.ItemClickListener;
 import com.example.wanandroid.javabean.BannerBean;
-import com.example.wanandroid.javabean.FirstPageNewsBean;
 import com.example.wanandroid.javabean.NewsBean;
+import com.example.wanandroid.javabean.PageNewsBean;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.example.wanandroid.view.ViewPagerIndex;
 
@@ -129,12 +129,12 @@ public class FirstPageFragment extends Fragment {
      */
     public void getFirstPageNews(int page)
     {
-        Observable<FirstPageNewsBean> observableFirstPage = retrofitUtils.callFirstPage(page);
+        Observable<PageNewsBean> observableFirstPage = retrofitUtils.callFirstPage(page);
         observableFirstPage.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<FirstPageNewsBean>() {
+                .subscribe(new Consumer<PageNewsBean>() {
                     @Override
-                    public void accept(FirstPageNewsBean firstPageNewsBean) throws Exception {
+                    public void accept(PageNewsBean firstPageNewsBean) throws Exception {
                         if(firstPageNewsBean.getErrorCode() == 0)
                         {
                             Log.d(TAG, "news size: "+firstPageNewsBean.getData().getDatas().size());

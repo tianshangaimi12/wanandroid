@@ -22,19 +22,12 @@ import com.example.wanandroid.contoller.MainFragmentAdapter;
 import com.example.wanandroid.fragment.FirstPageFragment;
 import com.example.wanandroid.fragment.NavigationFragment;
 import com.example.wanandroid.fragment.SystemFragment;
-import com.example.wanandroid.javabean.BannerBean;
-import com.example.wanandroid.javabean.FirstPageNewsBean;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
