@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.example.wanandroid.contoller.MainFragmentAdapter;
 import com.example.wanandroid.fragment.FirstPageFragment;
 import com.example.wanandroid.fragment.NavigationFragment;
+import com.example.wanandroid.fragment.SettingFragment;
 import com.example.wanandroid.fragment.SystemFragment;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -33,12 +35,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private DrawerLayout mainDrawerLayout;
-    private RelativeLayout settingRlayout;
     private Toolbar mainToolbar;
     private ViewPager mainViewPager;
     private LinearLayout firstPageLL;
     private LinearLayout systemLL;
     private LinearLayout navigationLL;
+    private FrameLayout settingFl;
     private ImageView firstPageImg;
     private ImageView systemImg;
     private ImageView navigationImg;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirstPageFragment firstPageFragment;
     private SystemFragment systemFragment;
     private NavigationFragment navigationFragment;
+    private SettingFragment settingFragment;
     private MainFragmentAdapter mainFragmentAdapter;
     private Retrofit builder;
     public RetrofitUtils retrofitUtils;
@@ -60,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initData();
         initView();
         initToolBar();
-        initData();
     }
 
     private void initView()
@@ -77,17 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationImg = (ImageView)findViewById(R.id.img_bottom_navigation);
         navigationTxt = (TextView)findViewById(R.id.txt_bottom_navigation);
         mainDrawerLayout = (DrawerLayout)findViewById(R.id.dl_main);
-        settingRlayout = (RelativeLayout)findViewById(R.id.rl_setting);
+        settingFl = (FrameLayout) findViewById(R.id.fl_setting);
         mainViewPager = (ViewPager)findViewById(R.id.vp_main);
-        List<Fragment> fragments = new ArrayList<>();
-        FragmentManager fm = getSupportFragmentManager();
-        firstPageFragment = new FirstPageFragment();
-        systemFragment = new SystemFragment();
-        navigationFragment = new NavigationFragment();
-        fragments.add(firstPageFragment);
-        fragments.add(systemFragment);
-        fragments.add(navigationFragment);
-        mainFragmentAdapter = new MainFragmentAdapter(fm, fragments);
         mainViewPager.setAdapter(mainFragmentAdapter);
         mainViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -200,6 +194,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         retrofitUtils = builder.create(RetrofitUtils.class);
+        List<Fragment> fragments = new ArrayList<>();
+        FragmentManager fm = getSupportFragmentManager();
+        firstPageFragment = new FirstPageFragment();
+        systemFragment = new SystemFragment();
+        navigationFragment = new NavigationFragment();
+        settingFragment = new SettingFragment();
+        fragments.add(firstPageFragment);
+        fragments.add(systemFragment);
+        fragments.add(navigationFragment);
+        mainFragmentAdapter = new MainFragmentAdapter(fm, fragments);
+        fm.beginTransaction().add(R.id.fl_setting, settingFragment).commit();
     }
 
 
