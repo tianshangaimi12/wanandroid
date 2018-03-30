@@ -6,7 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.wanandroid.R;
@@ -15,9 +18,16 @@ import com.example.wanandroid.view.CircleCrop;
 /**
  * Created by zhangchong on 18-3-22.
  */
-public class SettingFragment extends Fragment {
+public class SettingFragment extends Fragment implements View.OnClickListener{
 
     private ImageView imageView;
+    private TextView txtUser;
+    private Button btnRegister;
+    private Button btnLogin;
+    private LinearLayout btnShowCollected;
+    private LinearLayout btnExitLogin;
+    private LinearLayout btnAboutApp;
+    private LinearLayout btnExitApp;
 
     @Nullable
     @Override
@@ -34,5 +44,42 @@ public class SettingFragment extends Fragment {
                 .load(R.drawable.user)
                 .transform(new CircleCrop(getActivity()))
                 .into(imageView);
+        txtUser = (TextView)view.findViewById(R.id.txt_login_user);
+        btnRegister = (Button)view.findViewById(R.id.btn_register);
+        btnLogin = (Button)view.findViewById(R.id.btn_login);
+        btnShowCollected = (LinearLayout)view.findViewById(R.id.ll_setting_item_collected);
+        btnExitLogin = (LinearLayout)view.findViewById(R.id.ll_setting_item_exit_login);
+        btnAboutApp = (LinearLayout)view.findViewById(R.id.ll_setting_item_about);
+        btnExitApp = (LinearLayout)view.findViewById(R.id.ll_setting_item_exit_app);
+        btnRegister.setOnClickListener(this);
+        btnLogin.setOnClickListener(this);
+        btnShowCollected.setOnClickListener(this);
+        btnExitLogin.setOnClickListener(this);
+        btnAboutApp.setOnClickListener(this);
+        btnExitApp.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.btn_register:
+                LoginFragment registerFragment = new LoginFragment();
+                registerFragment.show(getFragmentManager(), "LoginFragment");
+                registerFragment.setMode(0);
+                break;
+            case R.id.btn_login:
+                LoginFragment loginFragment = new LoginFragment();
+                loginFragment.setMode(1);
+                loginFragment.show(getFragmentManager(), "LoginFragment");
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setUserName(String userName)
+    {
+        txtUser.setText(userName);
     }
 }

@@ -11,4 +11,8 @@
     <string name="exit_login">退出登录</string>
     <string name="exit_app">退出应用</string>
     <string name="about_app">关于应用</string>
+    <string name="login_user">用户名：</string>
+    <string name="login_pwd">密码：</string>
+    <string name="login_commit_pwd">确认密码：</string>
+    <string name="login_send">确认</string>
 </resources>

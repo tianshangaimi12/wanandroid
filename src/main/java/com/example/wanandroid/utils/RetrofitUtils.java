@@ -5,8 +5,16 @@ import com.example.wanandroid.javabean.FamousWebsBean;
 import com.example.wanandroid.javabean.PageNewsBean;
 import com.example.wanandroid.javabean.SystemBean;
 
+import java.util.Map;
+
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -33,7 +41,22 @@ public interface RetrofitUtils {
      * @param cid  分支courseId
      * @return
      */
-    @GET("/article/list/{page}/json")
+    @GET("article/list/{page}/json")
     Observable<PageNewsBean> callSystemItemData(@Path("page") int page, @Query("cid") int cid);
+
+    //注册
+    @FormUrlEncoded
+    @POST("user/register")
+    Call<ResponseBody> registerCall(@FieldMap Map<String, String> params);
+
+    //登录
+    @FormUrlEncoded
+    @POST("user/login")
+    Call<ResponseBody> loginCall(@Field("username") String username, @Field("password") String password);
+
+    //收藏站内文章
+    @FormUrlEncoded
+    @POST("lg/collect/{id}/json")
+    Call<ResponseBody> collectInMessage(@Path("id") int id);
 
 }

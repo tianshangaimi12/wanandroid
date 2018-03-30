@@ -208,5 +208,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    public void setLoginUserName(String userName)
+    {
+        if(settingFragment != null)
+        {
+            settingFragment.setUserName(userName);
+        }
+    }
 }
 
