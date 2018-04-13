@@ -1,7 +1,10 @@
 package com.example.wanandroid.fragment;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.wanandroid.MainActivity;
+import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.WebViewActivity;
 import com.example.wanandroid.contoller.FirstPageNewsAdapter;
@@ -26,6 +30,7 @@ import com.example.wanandroid.javabean.NewsBean;
 import com.example.wanandroid.javabean.PageNewsBean;
 import com.example.wanandroid.javabean.SystemBean;
 import com.example.wanandroid.javabean.SystemItemBean;
+import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.ImgUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.example.wanandroid.view.AutoLinefeedLayout;
@@ -53,8 +58,20 @@ public class SystemFragment extends Fragment {
     private SystemBean mainSystemBean;
     private int pageIndex;
     private boolean autoLayoutExpanded;
+    private Receiver receiver;
+    private IntentFilter intentFilter;
+    private int courseId;
 
     private final String TAG = "SystemFragment";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        receiver = new Receiver();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED);
+        getActivity().registerReceiver(receiver, intentFilter);
+    }
 
     @Nullable
     @Override
@@ -71,9 +88,17 @@ public class SystemFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivity activity = (MainActivity) getActivity();
-        retrofitUtils = activity.retrofitUtils;
+        retrofitUtils = MainApplication.retrofitUtils;
         getSystemItem();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(receiver != null)
+        {
+            getActivity().unregisterReceiver(receiver);
+        }
     }
 
     /**
@@ -95,6 +120,7 @@ public class SystemFragment extends Fragment {
                             itemRecyclerView.setAdapter(systemItemAdapter);
                             autoLayoutExpanded = false;
                             pageIndex = 0;
+                            courseId = systemBean.getData().get(0).getChildren().get(0).getId();
                             getSystemItemData(0, systemBean.getData().get(0).getChildren().get(0).getId());
                             systemItemAdapter.setItemClickListener(new ItemClickListener() {
                                 @Override
@@ -196,6 +222,19 @@ public class SystemFragment extends Fragment {
             });
             autoLinefeedLayout.addView(button, new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ImgUtils.dip2Pix(getActivity(), 35)));
+        }
+    }
+
+    class Receiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "receive action: "+action);
+            if(action.equals(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED))
+            {
+                getSystemItemData(0, courseId);
+            }
         }
     }
 

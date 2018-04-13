@@ -1,5 +1,6 @@
 package com.example.wanandroid.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -14,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wanandroid.MainActivity;
+import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
+import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 
 
@@ -96,10 +99,7 @@ public class LoginFragment extends DialogFragment {
 
     public void applyCommit()
     {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .build();
-        RetrofitUtils retrofitUtils = retrofit.create(RetrofitUtils.class);
+        RetrofitUtils retrofitUtils = MainApplication.retrofitUtils;
         if(type == TYPE_LOGIN)
         {
             final String username = edtUserName.getText().toString();
@@ -119,6 +119,8 @@ public class LoginFragment extends DialogFragment {
                             Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
                             MainActivity activity = (MainActivity)getActivity();
                             activity.setLoginUserName(username);
+                            Intent intent = new Intent(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED);
+                            activity.sendBroadcast(intent);
                         }
                         else
                         {

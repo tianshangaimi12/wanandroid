@@ -1,6 +1,7 @@
 package com.example.wanandroid.utils;
 
 import com.example.wanandroid.javabean.BannerBean;
+import com.example.wanandroid.javabean.CollectListBean;
 import com.example.wanandroid.javabean.FamousWebsBean;
 import com.example.wanandroid.javabean.PageNewsBean;
 import com.example.wanandroid.javabean.SystemBean;
@@ -55,8 +56,20 @@ public interface RetrofitUtils {
     Call<ResponseBody> loginCall(@Field("username") String username, @Field("password") String password);
 
     //收藏站内文章
-    @FormUrlEncoded
     @POST("lg/collect/{id}/json")
     Call<ResponseBody> collectInMessage(@Path("id") int id);
+
+    //文章列表取消收藏
+    @POST("lg/uncollect_originId/{id}/json")
+    Call<ResponseBody> disCollectInMessage(@Path("id") int id);
+
+    //获取收藏文章列表
+    @GET("lg/collect/list/{page}/json")
+    Observable<CollectListBean> getCollectListNews(@Path("page") int page);
+
+    //收藏列表取消收藏
+    @FormUrlEncoded
+    @POST("lg/uncollect/{id}/json")
+    Call<ResponseBody> disCollectInCollect(@Path("id") int id, @Field("originId") int originId);
 
 }

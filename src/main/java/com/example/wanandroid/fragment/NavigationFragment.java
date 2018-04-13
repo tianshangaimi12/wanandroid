@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.wanandroid.MainActivity;
+import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.WebViewActivity;
 import com.example.wanandroid.javabean.FamousWebsBean;
@@ -62,8 +63,7 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivity activity = (MainActivity) getActivity();
-        retrofitUtils = activity.retrofitUtils;
+        retrofitUtils = MainApplication.retrofitUtils;
         getFamousWebs();
     }
 

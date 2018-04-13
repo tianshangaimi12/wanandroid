@@ -29,7 +29,13 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -53,11 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavigationFragment navigationFragment;
     private SettingFragment settingFragment;
     private MainFragmentAdapter mainFragmentAdapter;
-    private Retrofit builder;
-    public RetrofitUtils retrofitUtils;
 
     private final String TAG = "MainActivity";
-    private final String BASE_URL = "http://www.wanandroid.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,12 +191,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void initData()
     {
-        builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        retrofitUtils = builder.create(RetrofitUtils.class);
         List<Fragment> fragments = new ArrayList<>();
         FragmentManager fm = getSupportFragmentManager();
         firstPageFragment = new FirstPageFragment();

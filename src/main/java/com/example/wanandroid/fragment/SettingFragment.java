@@ -1,5 +1,6 @@
 package com.example.wanandroid.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,7 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.wanandroid.CollectActivity;
 import com.example.wanandroid.R;
+import com.example.wanandroid.WebViewActivity;
 import com.example.wanandroid.view.CircleCrop;
 
 /**
@@ -73,6 +76,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
                 loginFragment.setMode(1);
                 loginFragment.show(getFragmentManager(), "LoginFragment");
                 break;
+            case R.id.ll_setting_item_exit_app:
+                getActivity().finish();
+                break;
+            case R.id.ll_setting_item_collected:
+                Intent intent = new Intent(getActivity(), CollectActivity.class);
+                getActivity().startActivity(intent);
             default:
                 break;
         }

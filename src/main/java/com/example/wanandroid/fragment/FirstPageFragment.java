@@ -1,7 +1,9 @@
 package com.example.wanandroid.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.wanandroid.MainActivity;
+import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.WebViewActivity;
 import com.example.wanandroid.contoller.BannerAdapter;
@@ -22,9 +25,13 @@ import com.example.wanandroid.contoller.ItemClickListener;
 import com.example.wanandroid.javabean.BannerBean;
 import com.example.wanandroid.javabean.NewsBean;
 import com.example.wanandroid.javabean.PageNewsBean;
+import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.example.wanandroid.view.ViewPagerIndex;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +39,10 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by zhangchong on 18-3-12.
@@ -46,6 +57,8 @@ public class FirstPageFragment extends Fragment {
     private List<NewsBean> newsBeens;
     private FirstPageNewsAdapter firstPageNewsAdapter;
     private Context context;
+    private Receiver receiver;
+    private IntentFilter intentFilter;
 
     private final String TAG = "FirstPageFragment";
 
@@ -53,6 +66,15 @@ public class FirstPageFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        receiver = new Receiver();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED);
+        context.registerReceiver(receiver, intentFilter);
     }
 
     @Nullable
@@ -66,10 +88,18 @@ public class FirstPageFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivity activity = (MainActivity)getActivity();
-        retrofitUtils = activity.retrofitUtils;
+        retrofitUtils = MainApplication.retrofitUtils;
         getBanner();
         getFirstPageNews(0);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(receiver != null)
+        {
+            context.unregisterReceiver(receiver);
+        }
     }
 
     private void initView(View view)
@@ -149,11 +179,26 @@ public class FirstPageFragment extends Fragment {
                                     intent.putExtra("load_url", loadUrl);
                                     context.startActivity(intent);
                                 }
+
                             });
                         }
                         else Log.d(TAG, firstPageNewsBean.getErrorMsg());
                     }
                 });
+    }
+
+
+    class Receiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "receive action: "+action);
+            if(action.equals(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED))
+            {
+                getFirstPageNews(0);
+            }
+        }
     }
 
 }
