@@ -4,6 +4,7 @@ import com.example.wanandroid.javabean.BannerBean;
 import com.example.wanandroid.javabean.CollectListBean;
 import com.example.wanandroid.javabean.FamousWebsBean;
 import com.example.wanandroid.javabean.PageNewsBean;
+import com.example.wanandroid.javabean.SearchWordsBean;
 import com.example.wanandroid.javabean.SystemBean;
 
 import java.util.Map;
@@ -71,5 +72,12 @@ public interface RetrofitUtils {
     @FormUrlEncoded
     @POST("lg/uncollect/{id}/json")
     Call<ResponseBody> disCollectInCollect(@Path("id") int id, @Field("originId") int originId);
+
+    @GET("hotkey/json")
+    Observable<SearchWordsBean> getSearchWords();
+
+    @FormUrlEncoded
+    @POST("article/query/{page}/json")
+    Observable<PageNewsBean> getSearchResult(@Path("page")int page, @Field("k")String searchWord);
 
 }

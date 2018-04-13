@@ -20,7 +20,6 @@
         <TextView
             android:id="@+id/txt_item_news_person"
             android:gravity="center"
-            android:text="1234"
             android:layout_toRightOf="@id/img_item_news_person"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,8 +31,7 @@
             android:id="@+id/txt_item_news_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:text="1234"
+            android:textSize="16sp"
             android:textColor="@color/colorMain"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"/>

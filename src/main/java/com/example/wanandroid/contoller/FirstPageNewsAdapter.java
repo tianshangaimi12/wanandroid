@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.wanandroid.MainActivity;
 import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.javabean.NewsBean;
@@ -66,7 +65,8 @@ public class FirstPageNewsAdapter  extends RecyclerView.Adapter<FirstPageNewsAda
         NewsBean newsBean = newsBeens.get(position);
         holder.txtName.setText(newsBean.getAuthor());
         holder.txtSubject.setText(newsBean.getChapterName());
-        holder.txtContent.setText(newsBean.getTitle());
+
+        holder.txtContent.setText(replace(newsBean.getTitle()));
         holder.txtDate.setText(newsBean.getNiceDate());
         if(newsBean.isCollect() == true)
         {
@@ -189,4 +189,32 @@ public class FirstPageNewsAdapter  extends RecyclerView.Adapter<FirstPageNewsAda
             imgLoved = (ImageView)itemView.findViewById(R.id.img_item_news_loved);
         }
     }
+
+    public static String replace(String str) // 识别括号并将括号内容替换的函数
+    {
+        int head = str.indexOf('<'); // 标记第一个使用左括号的位置
+        if (head == -1)
+            ; // 如果str中不存在括号，什么也不做，直接跑到函数底端返回初值str
+        else {
+            int next = head + 1; // 从head+1起检查每个字符
+            int count = 1; // 记录括号情况
+            do {
+                if (str.charAt(next) == '<')
+                    count++;
+                else if (str.charAt(next) == '>')
+                    count--;
+                next++; // 更新即将读取的下一个字符的位置
+                if (count == 0) // 已经找到匹配的括号
+                {
+                    String temp = str.substring(head, next); // 将两括号之间的内容及括号提取到temp中
+                    str = str.replace(temp, ""); // 用空内容替换，复制给str
+                    head = str.indexOf('<'); // 找寻下一个左括号
+                    next = head + 1; // 标记下一个左括号后的字符位置
+                    count = 1; // count的值还原成1
+                }
+            } while (head != -1); // 如果在该段落中找不到左括号了，就终止循环
+        }
+        return str; // 返回更新后的str
+    }
+
 }

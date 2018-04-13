@@ -1,6 +1,5 @@
 package com.example.wanandroid.fragment;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.wanandroid.MainActivity;
 import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.WebViewActivity;
@@ -208,7 +206,7 @@ public class SystemFragment extends Fragment {
             button.setTextColor(Color.DKGRAY);
             button.setTextSize(14);
             button.setPadding(10, ImgUtils.dip2Pix(getActivity(), 2), 10 ,ImgUtils.dip2Pix(getActivity(), 2));
-            button.setBackground(getActivity().getResources().getDrawable(R.drawable.shape_btn_system_item));
+            button.setBackgroundResource(R.drawable.shape_btn_system_item);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -21,10 +21,8 @@ import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +30,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * Created by zhangchong on 18-3-26.

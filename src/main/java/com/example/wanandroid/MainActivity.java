@@ -1,5 +1,6 @@
 package com.example.wanandroid;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wanandroid.contoller.MainFragmentAdapter;
@@ -24,20 +23,10 @@ import com.example.wanandroid.fragment.FirstPageFragment;
 import com.example.wanandroid.fragment.NavigationFragment;
 import com.example.wanandroid.fragment.SettingFragment;
 import com.example.wanandroid.fragment.SystemFragment;
-import com.example.wanandroid.utils.RetrofitUtils;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private DrawerLayout mainDrawerLayout;
@@ -156,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (item.getItemId())
                 {
                     case R.id.menu_search:
+                        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;
@@ -170,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
 
     @Override
     public void onClick(View view) {

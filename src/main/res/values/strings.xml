@@ -16,4 +16,7 @@
     <string name="login_commit_pwd">确认密码：</string>
     <string name="login_send">确认</string>
     <string name="toast_disCollect_success">取消收藏成功</string>
+    <string name="search_hint">请输入搜索内容</string>
+    <string name="search_hot_words">搜索热词</string>
+    <string name="search_result">搜索结果</string>
 </resources>

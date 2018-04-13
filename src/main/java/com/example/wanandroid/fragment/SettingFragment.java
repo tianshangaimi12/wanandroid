@@ -1,12 +1,15 @@
 package com.example.wanandroid.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,7 +18,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.wanandroid.CollectActivity;
 import com.example.wanandroid.R;
-import com.example.wanandroid.WebViewActivity;
 import com.example.wanandroid.view.CircleCrop;
 
 /**
@@ -31,6 +33,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     private LinearLayout btnExitLogin;
     private LinearLayout btnAboutApp;
     private LinearLayout btnExitApp;
+
+    private final String ABOUT_IMG_URL = "http://www.enterdesk.com/uploadfile/2014/0227/20140227113508372.jpg";
 
     @Nullable
     @Override
@@ -82,6 +86,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
             case R.id.ll_setting_item_collected:
                 Intent intent = new Intent(getActivity(), CollectActivity.class);
                 getActivity().startActivity(intent);
+                break;
+            case R.id.ll_setting_item_about:
+                showAboutWindow();
+                break;
+            case R.id.ll_setting_item_exit_login:
+                txtUser.setText("");
+                break;
             default:
                 break;
         }
@@ -90,5 +101,35 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     public void setUserName(String userName)
     {
         txtUser.setText(userName);
+    }
+
+    public void showAboutWindow()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_about, null,false);
+        builder.create();
+        final Dialog dialog = builder.show();
+        dialog.getWindow().setContentView(view);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = 700;
+        params.height = 600 ;
+        ImageView imageView = (ImageView)view.findViewById(R.id.img_dialog_about);
+        Glide.with(getActivity())
+                .load(R.drawable.user)
+                .placeholder(R.drawable.ic_about)
+                .fitCenter()
+                .transform(new CircleCrop(getActivity()))
+                .into(imageView);
+        TextView textView = (TextView)view.findViewById(R.id.txt_dialog_about);
+        textView.setText("CREATED"+"\n"+"BY"+"\n"+"Z&C");
+        TextView button = (TextView)view.findViewById(R.id.btn_dialog_about);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }

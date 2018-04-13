@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".WebViewActivity"/>
         <activity android:name=".CollectActivity"/>
+        <activity android:name=".SearchActivity"/>
+        <activity android:name=".SearchResultActivity"/>
     </application>
 
 </manifest>

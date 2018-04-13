@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.wanandroid.MainActivity;
 import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
 import com.example.wanandroid.WebViewActivity;
@@ -29,9 +28,6 @@ import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.example.wanandroid.view.ViewPagerIndex;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +35,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by zhangchong on 18-3-12.
