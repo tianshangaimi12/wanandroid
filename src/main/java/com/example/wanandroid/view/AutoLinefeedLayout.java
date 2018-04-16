@@ -36,7 +36,7 @@ public class AutoLinefeedLayout extends ViewGroup{
         int childLeft = getPaddingLeft();
 
         int availableLineWidth = lineWidth;
-        int maxLineHight = 0;
+        int maxLineHeight = 0;
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
@@ -48,16 +48,16 @@ public class AutoLinefeedLayout extends ViewGroup{
 
                 if (availableLineWidth < childWidth) {
                     availableLineWidth = lineWidth;
-                    paddingTop = paddingTop + maxLineHight+getPaddingTop();
+                    paddingTop = paddingTop + maxLineHeight+getPaddingTop();
                     childLeft = getPaddingLeft();
-                    maxLineHight = 0;
+                    maxLineHeight = 0;
                 }
                 childTop = paddingTop;
                 setChildFrame(child, childLeft, childTop, childWidth,
                         childHeight);
                 childLeft += childWidth + getPaddingLeft();
                 availableLineWidth = availableLineWidth - childWidth;
-                maxLineHight = Math.max(maxLineHight, childHeight);
+                maxLineHeight = Math.max(maxLineHeight, childHeight);
             }
         }
     }

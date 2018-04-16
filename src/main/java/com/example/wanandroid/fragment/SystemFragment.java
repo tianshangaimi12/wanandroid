@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
@@ -33,6 +34,7 @@ import com.example.wanandroid.utils.ImgUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 import com.example.wanandroid.view.AutoLinefeedLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -59,6 +61,7 @@ public class SystemFragment extends Fragment {
     private Receiver receiver;
     private IntentFilter intentFilter;
     private int courseId;
+    private int page;
 
     private final String TAG = "SystemFragment";
 
@@ -69,6 +72,7 @@ public class SystemFragment extends Fragment {
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED);
         getActivity().registerReceiver(receiver, intentFilter);
+        page = 0;
     }
 
     @Nullable
@@ -80,6 +84,41 @@ public class SystemFragment extends Fragment {
         autoLinefeedLayout = (AutoLinefeedLayout)view.findViewById(R.id.auto_layout_subject_item);
         itemRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
         itemDataRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        newsBeanList = new ArrayList<>();
+        firstPageNewsAdapter = new FirstPageNewsAdapter(getActivity(), newsBeanList);
+        itemDataRecyclerView.setAdapter(firstPageNewsAdapter);
+        firstPageNewsAdapter.setItemClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String loadUrl = newsBeanList.get(position).getLink();
+                Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                intent.putExtra("load_url", loadUrl);
+                getActivity().startActivity(intent);
+            }
+        });
+        itemDataRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(firstPageNewsAdapter != null){
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                        //判断是当前layoutManager是否为LinearLayoutManager
+                        // 只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                        if (layoutManager instanceof LinearLayoutManager) {
+                            LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                            //获取最后一个可见view的位置
+                            int lastItemPosition = linearManager.findLastVisibleItemPosition();
+                            Log.d(TAG, "last:"+lastItemPosition+"");
+                            if(lastItemPosition == firstPageNewsAdapter.getItemCount()-1){
+                                page++;
+                                getSystemItemData(page, courseId);
+                            }
+                        }
+                    }
+                }
+            }
+        });
         return view;
     }
 
@@ -123,6 +162,7 @@ public class SystemFragment extends Fragment {
                             systemItemAdapter.setItemClickListener(new ItemClickListener() {
                                 @Override
                                 public void onItemClick(View view, int position) {
+                                    courseId = systemBean.getData().get(position).getChildren().get(0).getId();
                                     if(autoLayoutExpanded == true)
                                     {
                                         autoLinefeedLayout.setVisibility(View.INVISIBLE);
@@ -140,8 +180,9 @@ public class SystemFragment extends Fragment {
                                         systemBean.setIndex(position);
                                         systemItemAdapter.notifyDataSetChanged();
                                         newsBeanList.clear();
+                                        page = 0;
                                         firstPageNewsAdapter.notifyDataSetChanged();
-                                        getSystemItemData(0, systemBean.getData().get(position).getChildren().get(0).getId());
+                                        getSystemItemData(0, courseId);
                                     }
                                 }
                             });
@@ -159,7 +200,7 @@ public class SystemFragment extends Fragment {
      * @param page 页数
      * @param courseId 子项cid
      */
-    public void getSystemItemData(int page , int courseId)
+    public void getSystemItemData(final int page , int courseId)
     {
         Observable<PageNewsBean> observable = retrofitUtils.callSystemItemData(page, courseId);
         observable.subscribeOn(Schedulers.io())
@@ -169,18 +210,11 @@ public class SystemFragment extends Fragment {
                     public void accept(final PageNewsBean pageNewsBean) throws Exception {
                         if(pageNewsBean.getErrorCode() == 0)
                         {
-                            newsBeanList = pageNewsBean.getData().getDatas();
-                            firstPageNewsAdapter = new FirstPageNewsAdapter(getActivity(), newsBeanList);
-                            itemDataRecyclerView.setAdapter(firstPageNewsAdapter);
-                            firstPageNewsAdapter.setItemClickListener(new ItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    String loadUrl = pageNewsBean.getData().getDatas().get(position).getLink();
-                                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                                    intent.putExtra("load_url", loadUrl);
-                                    getActivity().startActivity(intent);
-                                }
-                            });
+                            newsBeanList.addAll(pageNewsBean.getData().getDatas());
+                            firstPageNewsAdapter.notifyDataSetChanged();
+                            if(page > 0 && pageNewsBean.getData().getDatas().size() > 0){
+                                Toast.makeText(getActivity(), R.string.loading_next_page, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else
                         {
@@ -212,7 +246,8 @@ public class SystemFragment extends Fragment {
                 public void onClick(View view) {
                     newsBeanList.clear();
                     firstPageNewsAdapter.notifyDataSetChanged();
-                    getSystemItemData(0, systemItemBean.getId());
+                    page = 0;
+                    getSystemItemData(page, systemItemBean.getId());
                     autoLinefeedLayout.setVisibility(View.INVISIBLE);
                     autoLinefeedLayout.removeAllViews();
                     autoLayoutExpanded = false;

@@ -19,4 +19,5 @@
     <string name="search_hint">请输入搜索内容</string>
     <string name="search_hot_words">搜索热词</string>
     <string name="search_result">搜索结果</string>
+    <string name="loading_next_page">加载更多</string>
 </resources>

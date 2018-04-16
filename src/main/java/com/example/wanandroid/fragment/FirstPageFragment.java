@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.wanandroid.MainApplication;
 import com.example.wanandroid.R;
@@ -52,6 +53,8 @@ public class FirstPageFragment extends Fragment {
     private Receiver receiver;
     private IntentFilter intentFilter;
 
+    private int page;
+
     private final String TAG = "FirstPageFragment";
 
     @Override
@@ -67,6 +70,7 @@ public class FirstPageFragment extends Fragment {
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastUtils.ACTION_NOTIFY_DATA_CHANGED);
         context.registerReceiver(receiver, intentFilter);
+        page = 0;
     }
 
     @Nullable
@@ -82,7 +86,7 @@ public class FirstPageFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         retrofitUtils = MainApplication.retrofitUtils;
         getBanner();
-        getFirstPageNews(0);
+        getFirstPageNews(page);
     }
 
     @Override
@@ -119,6 +123,39 @@ public class FirstPageFragment extends Fragment {
         recyclerView = (RecyclerView)view.findViewById(R.id.rlv_first_page_news);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(firstPageNewsAdapter);
+        firstPageNewsAdapter.setItemClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String loadUrl = newsBeens.get(position).getLink();
+                Intent intent = new Intent(context, WebViewActivity.class);
+                intent.putExtra("load_url", loadUrl);
+                context.startActivity(intent);
+            }
+
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(firstPageNewsAdapter != null){
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                        //判断是当前layoutManager是否为LinearLayoutManager
+                        // 只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                        if (layoutManager instanceof LinearLayoutManager) {
+                            LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                            //获取最后一个可见view的位置
+                            int lastItemPosition = linearManager.findLastVisibleItemPosition();
+                            Log.d(TAG, "last:"+lastItemPosition+"");
+                            if(lastItemPosition == firstPageNewsAdapter.getItemCount()-1){
+                                page++;
+                                getFirstPageNews(page);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -149,7 +186,7 @@ public class FirstPageFragment extends Fragment {
      * 获取首页新闻列表
      * @param page 页数
      */
-    public void getFirstPageNews(int page)
+    public void getFirstPageNews(final int page)
     {
         Observable<PageNewsBean> observableFirstPage = retrofitUtils.callFirstPage(page);
         observableFirstPage.subscribeOn(Schedulers.io())
@@ -159,20 +196,13 @@ public class FirstPageFragment extends Fragment {
                     public void accept(PageNewsBean firstPageNewsBean) throws Exception {
                         if(firstPageNewsBean.getErrorCode() == 0)
                         {
-                            Log.d(TAG, "news size: "+firstPageNewsBean.getData().getDatas().size());
-                            newsBeens = firstPageNewsBean.getData().getDatas();
-                            firstPageNewsAdapter = new FirstPageNewsAdapter(getActivity(), newsBeens);
-                            recyclerView.setAdapter(firstPageNewsAdapter);
-                            firstPageNewsAdapter.setItemClickListener(new ItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    String loadUrl = newsBeens.get(position).getLink();
-                                    Intent intent = new Intent(context, WebViewActivity.class);
-                                    intent.putExtra("load_url", loadUrl);
-                                    context.startActivity(intent);
-                                }
-
-                            });
+                            int newsSize = firstPageNewsBean.getData().getDatas().size();
+                            Log.d(TAG, "news size: "+newsSize);
+                            newsBeens.addAll(firstPageNewsBean.getData().getDatas());
+                            firstPageNewsAdapter.notifyDataSetChanged();
+                            if(page > 0 && newsSize > 0){
+                                Toast.makeText(getActivity(), R.string.loading_next_page, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else Log.d(TAG, firstPageNewsBean.getErrorMsg());
                     }

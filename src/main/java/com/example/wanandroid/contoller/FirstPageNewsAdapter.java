@@ -68,7 +68,7 @@ public class FirstPageNewsAdapter  extends RecyclerView.Adapter<FirstPageNewsAda
 
         holder.txtContent.setText(replace(newsBean.getTitle()));
         holder.txtDate.setText(newsBean.getNiceDate());
-        if(newsBean.isCollect() == true)
+        if(newsBean.isCollect())
         {
             holder.imgLoved.setImageResource(R.drawable.ic_love_on);
         }

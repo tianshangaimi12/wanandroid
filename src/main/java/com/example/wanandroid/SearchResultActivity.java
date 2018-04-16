@@ -18,6 +18,7 @@ import com.example.wanandroid.javabean.PageNewsBean;
 import com.example.wanandroid.utils.BroadCastUtils;
 import com.example.wanandroid.utils.RetrofitUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -31,6 +32,12 @@ import io.reactivex.schedulers.Schedulers;
 public class SearchResultActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
+
+    private int page;
+    private String searchWord;
+    private FirstPageNewsAdapter adapter;
+    private List<NewsBean> newsBeanList;
+    private RetrofitUtils retrofitUtils;
 
     private final String TAG = "SearchResultActivity";
 
@@ -57,9 +64,50 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     public void initData(){
-        String searchWord = getIntent().getStringExtra(BroadCastUtils.EXTRA_SEARCH_WORD);
-        RetrofitUtils retrofitUtils = MainApplication.retrofitUtils;
-        Observable<PageNewsBean> getSearchResults = retrofitUtils.getSearchResult(0, searchWord);
+        page = 0;
+        newsBeanList = new ArrayList<>();
+        adapter = new FirstPageNewsAdapter(this, newsBeanList);
+        recyclerView.setAdapter(adapter);
+        adapter.setItemClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String loadUrl = newsBeanList.get(position).getLink();
+                Intent intent = new Intent(SearchResultActivity.this, WebViewActivity.class);
+                intent.putExtra("load_url", loadUrl);
+                startActivity(intent);
+            }
+
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(adapter != null){
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                        //判断是当前layoutManager是否为LinearLayoutManager
+                        // 只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                        if (layoutManager instanceof LinearLayoutManager) {
+                            LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                            //获取最后一个可见view的位置
+                            int lastItemPosition = linearManager.findLastVisibleItemPosition();
+                            Log.d(TAG, "last:"+lastItemPosition+"");
+                            if(lastItemPosition == adapter.getItemCount()-1){
+                                page++;
+                                getSearchResult(page, searchWord);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        searchWord = getIntent().getStringExtra(BroadCastUtils.EXTRA_SEARCH_WORD);
+        retrofitUtils = MainApplication.retrofitUtils;
+        getSearchResult(page, searchWord);
+    }
+
+    public void getSearchResult(final int page, String searchWord){
+        Observable<PageNewsBean> getSearchResults = retrofitUtils.getSearchResult(page, searchWord);
         getSearchResults.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<PageNewsBean>() {
@@ -67,20 +115,13 @@ public class SearchResultActivity extends AppCompatActivity {
                     public void accept(PageNewsBean pageNewsBean) throws Exception {
                         if(pageNewsBean.getErrorCode() == 0)
                         {
-                            Log.d(TAG, "news size: "+pageNewsBean.getData().getDatas().size());
-                            final List<NewsBean> newsBeanList = pageNewsBean.getData().getDatas();
-                            FirstPageNewsAdapter adapter= new FirstPageNewsAdapter(SearchResultActivity.this, newsBeanList);
-                            recyclerView.setAdapter(adapter);
-                            adapter.setItemClickListener(new ItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    String loadUrl = newsBeanList.get(position).getLink();
-                                    Intent intent = new Intent(SearchResultActivity.this, WebViewActivity.class);
-                                    intent.putExtra("load_url", loadUrl);
-                                    startActivity(intent);
-                                }
-
-                            });
+                            int newsSize = pageNewsBean.getData().getDatas().size();
+                            Log.d(TAG, "news size: "+newsSize);
+                            newsBeanList.addAll(pageNewsBean.getData().getDatas());
+                            adapter.notifyDataSetChanged();
+                            if(page >0 && newsSize > 0){
+                                Toast.makeText(SearchResultActivity.this, R.string.loading_next_page, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else {
                             Toast.makeText(SearchResultActivity.this, pageNewsBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
