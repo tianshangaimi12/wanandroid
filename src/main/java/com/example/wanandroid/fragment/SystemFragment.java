@@ -247,6 +247,7 @@ public class SystemFragment extends Fragment {
                     newsBeanList.clear();
                     firstPageNewsAdapter.notifyDataSetChanged();
                     page = 0;
+                    courseId = systemItemBean.getId();
                     getSystemItemData(page, systemItemBean.getId());
                     autoLinefeedLayout.setVisibility(View.INVISIBLE);
                     autoLinefeedLayout.removeAllViews();
